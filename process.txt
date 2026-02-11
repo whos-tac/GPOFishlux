@@ -1,0 +1,32 @@
+
+make sure the clicks use the anti roblox 1 pixel down movement stuff, read how the other clicks handle mouse movement
+
+default start loop is on 0, so when first ran it runs once, then it will set the loop to the "loops per purchase" and then it will start counting down that thing until the next purchase, so if i set it to 100, it will only purchase every 100th loop (excluding the very first run)
+1) press e
+wait 3 seconds
+2) click left side
+wait 3 seconds
+3) click middle
+wait 3 seconds
+4) type number (the loops per purchase)
+wait 3 seconds
+5) click left
+wait 3 seconds
+6) click right
+wait 3 seconds
+6) click middle
+wait 3 seconds
+
+
+
+make sure the clicks use the anti roblox 1 pixel down movement stuff, read how the other clicks handle mouse movement
+
+1) send "devil_fruit_hotkey"
+wait 1 second
+2) click on store_fruit_point
+wait 2 seconds
+3) press shift
+wait 500ms
+4) press backspace
+wait 1.5 seconds
+5) press shift

@@ -1,0 +1,18 @@
+Blue color
+RGB: ( 85, 170, 255) | HEX: #55AAFF
+
+White Line
+RGB: (255, 255, 255) | HEX: #FFFFFF
+
+Black Area
+RGB: ( 25,  25,  25) | HEX: #191919
+
+
+
+
+
+Green Line
+RGB: (170, 255,   0) | HEX: #AAFF00
+
+Gray Area
+RGB: ( 32,  34,  36) | HEX: #202224

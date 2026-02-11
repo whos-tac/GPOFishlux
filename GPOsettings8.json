@@ -1,0 +1,71 @@
+{
+    "hotkeys": {
+        "start_stop": "f1",
+        "change_area": "f2",
+        "exit": "f3"
+    },
+    "area_box": {
+        "x1": 1268,
+        "y1": 400,
+        "x2": 1678,
+        "y2": 1118
+    },
+    "always_on_top": true,
+    "water_point": {
+        "x": 1076,
+        "y": 220
+    },
+    "kp": 0.9,
+    "kd": 0.3,
+    "pd_clamp": 1.0,
+    "cast_hold_duration": 1.0,
+    "recast_timeout": 30.0,
+    "fish_end_delay": 2.0,
+    "rod_hotkey": "1",
+    "anything_else_hotkey": "2",
+    "auto_buy_common_bait": false,
+    "auto_store_devil_fruit": false,
+    "auto_select_top_bait": true,
+    "left_point": {
+        "x": 1053,
+        "y": 1305
+    },
+    "middle_point": {
+        "x": 1281,
+        "y": 1304
+    },
+    "right_point": {
+        "x": 1510,
+        "y": 1302
+    },
+    "loops_per_purchase": 100,
+    "store_fruit_point": {
+        "x": 1284,
+        "y": 1154
+    },
+    "devil_fruit_hotkey": "3",
+    "bait_point": {
+        "x": 1281,
+        "y": 1066
+    },
+    "roblox_focus_delay": 0.2,
+    "roblox_post_focus_delay": 1.0,
+    "pre_cast_e_delay": 3.0,
+    "pre_cast_click_delay": 3.0,
+    "pre_cast_type_delay": 3.0,
+    "pre_cast_anti_detect_delay": 0.05,
+    "store_fruit_hotkey_delay": 1.0,
+    "store_fruit_click_delay": 2.0,
+    "store_fruit_shift_delay": 0.5,
+    "store_fruit_backspace_delay": 1.5,
+    "auto_select_bait_delay": 0.5,
+    "black_screen_threshold": 0.5,
+    "anti_macro_spam_delay": 0.25,
+    "rod_select_delay": 0.5,
+    "cursor_anti_detect_delay": 0.05,
+    "scan_loop_delay": 0.1,
+    "pd_approaching_damping": 2.0,
+    "pd_chasing_damping": 0.5,
+    "gap_tolerance_multiplier": 2.0,
+    "state_resend_interval": 0.5
+}

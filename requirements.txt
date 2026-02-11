@@ -1,0 +1,9 @@
+keyboard
+mss
+numpy
+pyautogui
+pywin32
+Pillow
+pynput
+
+
