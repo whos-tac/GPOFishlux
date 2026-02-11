@@ -1965,29 +1965,30 @@ class FishingMacroGUI:
     
     def show_outline_overlay(self):
         """Show outline of the mss screenshot area"""
+        # On Linux, skip the overlay entirely to avoid interfering with screen capture
+        # and triggering anti-cheat detection
+        if IS_LINUX:
+            print(f"Overlay skipped on Linux (scan area: X:{self.area_box['x1']}, Y:{self.area_box['y1']}, " +
+                  f"W:{self.area_box['x2'] - self.area_box['x1']}, H:{self.area_box['y2'] - self.area_box['y1']})")
+            return
+
         if self.outline_overlay is None:
             self.outline_overlay = tk.Toplevel(self.root)
             self.outline_overlay.attributes('-topmost', True)
-
-            # Use platform-specific transparency
-            if IS_LINUX:
-                self.outline_overlay.attributes('-alpha', 0.3)  # Semi-transparent on Linux
-            else:
-                self.outline_overlay.attributes('-transparentcolor', 'black')  # Full transparency on Windows
-
+            self.outline_overlay.attributes('-transparentcolor', 'black')  # Full transparency on Windows
             self.outline_overlay.overrideredirect(True)
             
             # Set position and size to match area_box
             width = self.area_box["x2"] - self.area_box["x1"]
             height = self.area_box["y2"] - self.area_box["y1"]
             self.outline_overlay.geometry(f"{width}x{height}+{self.area_box['x1']}+{self.area_box['y1']}")
+
+            # On Windows: use canvas with black background (will be made transparent)
             self.outline_overlay.configure(bg='black')
-            
-            # Create canvas with completely transparent center and bright border
-            canvas = tk.Canvas(self.outline_overlay, bg='black', 
+            canvas = tk.Canvas(self.outline_overlay, bg='black',
                              highlightthickness=4, highlightbackground='lime')
             canvas.pack(fill='both', expand=True)
-            
+
             print(f"Outline overlay shown at X:{self.area_box['x1']}, Y:{self.area_box['y1']}, W:{width}, H:{height}")
     
     def hide_outline_overlay(self):
@@ -2008,15 +2009,26 @@ class FishingMacroGUI:
 
             # Use platform-specific transparency
             if IS_LINUX:
-                self.debug_overlay.attributes('-alpha', 0.5)  # Semi-transparent on Linux
+                self.debug_overlay.attributes('-alpha', 0.6)  # Semi-transparent on Linux
+                self.debug_overlay.wait_visibility(self.debug_overlay)
+                try:
+                    self.debug_overlay.wm_attributes('-type', 'dock')  # Prevents window from capturing input
+                except:
+                    pass
             else:
                 self.debug_overlay.attributes('-transparentcolor', 'black')  # Full transparency on Windows
 
             self.debug_overlay.overrideredirect(True)
             self.debug_overlay.geometry(f"{screen_width}x{screen_height}+0+0")
-            self.debug_overlay.configure(bg='black')
-            
-            self.debug_canvas = tk.Canvas(self.debug_overlay, bg='black', highlightthickness=0)
+
+            if IS_LINUX:
+                # On Linux: use a slightly different background to avoid pure black
+                self.debug_overlay.configure(bg='#000001')  # Almost black but not quite
+                self.debug_canvas = tk.Canvas(self.debug_overlay, bg='#000001', highlightthickness=0)
+            else:
+                self.debug_overlay.configure(bg='black')
+                self.debug_canvas = tk.Canvas(self.debug_overlay, bg='black', highlightthickness=0)
+
             self.debug_canvas.pack(fill='both', expand=True)
             self.debug_arrow_ids = {}
     
