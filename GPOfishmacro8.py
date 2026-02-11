@@ -550,9 +550,17 @@ class FishingMacroGUI:
         button_grid.columnconfigure(2, weight=1)
 
         # Hotkeys section (compact) - for reference/rebinding
-        hotkeys_frame = ttk.LabelFrame(general_tab, text="Hotkeys (Optional - if working)", padding=10)
+        hotkey_label = "Hotkeys (DISABLED on Linux - Use Buttons)" if IS_LINUX else "Hotkeys (Optional - if working)"
+        hotkeys_frame = ttk.LabelFrame(general_tab, text=hotkey_label, padding=10)
         hotkeys_frame.pack(fill="x", padx=5, pady=5)
         
+        # Add warning note for Linux users
+        if IS_LINUX:
+            warning_note = ttk.Label(hotkeys_frame,
+                                    text="⚠️ Hotkeys don't work on Linux. Please use the control buttons above.",
+                                    foreground="red", font=("Arial", 9, "bold"))
+            warning_note.pack(pady=(0, 5))
+
         self.hotkey_displays = {}
         
         # Start/Stop hotkey
@@ -1003,6 +1011,11 @@ class FishingMacroGUI:
     
     def start_rebind(self, key):
         """Start listening for a new hotkey"""
+        if IS_LINUX:
+            messagebox.showinfo("Hotkeys Disabled",
+                              "Hotkeys are not supported on Linux.\nPlease use the GUI buttons instead.")
+            return
+
         self.is_rebinding = key
         
         try:
@@ -1027,11 +1040,18 @@ class FishingMacroGUI:
     
     def setup_hotkeys(self):
         """Setup all hotkey bindings"""
+        if IS_LINUX:
+            print("Note: Hotkeys are disabled on Linux. Please use the GUI buttons instead.")
+            return
+
         for key in self.hotkeys.keys():
             self.register_hotkey(key)
     
     def register_hotkey(self, key):
         """Register a single hotkey"""
+        if IS_LINUX:
+            return
+
         if key == "start_stop":
             keyboard.add_hotkey(self.hotkeys[key], self.toggle_macro)
         elif key == "change_area":
@@ -1948,7 +1968,13 @@ class FishingMacroGUI:
         if self.outline_overlay is None:
             self.outline_overlay = tk.Toplevel(self.root)
             self.outline_overlay.attributes('-topmost', True)
-            self.outline_overlay.attributes('-transparentcolor', 'black')
+
+            # Use platform-specific transparency
+            if IS_LINUX:
+                self.outline_overlay.attributes('-alpha', 0.3)  # Semi-transparent on Linux
+            else:
+                self.outline_overlay.attributes('-transparentcolor', 'black')  # Full transparency on Windows
+
             self.outline_overlay.overrideredirect(True)
             
             # Set position and size to match area_box
@@ -1979,7 +2005,13 @@ class FishingMacroGUI:
 
             self.debug_overlay = tk.Toplevel(self.root)
             self.debug_overlay.attributes('-topmost', True)
-            self.debug_overlay.attributes('-transparentcolor', 'black')
+
+            # Use platform-specific transparency
+            if IS_LINUX:
+                self.debug_overlay.attributes('-alpha', 0.5)  # Semi-transparent on Linux
+            else:
+                self.debug_overlay.attributes('-transparentcolor', 'black')  # Full transparency on Windows
+
             self.debug_overlay.overrideredirect(True)
             self.debug_overlay.geometry(f"{screen_width}x{screen_height}+0+0")
             self.debug_overlay.configure(bg='black')
