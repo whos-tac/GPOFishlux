@@ -1,9 +1,10 @@
-keyboard
-mss
-numpy
-pyautogui
-pywin32
-Pillow
-pynput
+keyboard>=0.13.5
+mss>=9.0.0
+numpy>=1.24.0
+pyautogui>=0.9.50
+pywin32>=300; sys_platform == 'win32'
+Pillow>=10.0.0
+pynput>=1.7.6
+opencv-python-headless>=4.8.0
 
 

@@ -21,7 +21,6 @@ IS_LINUX = platform.system() == "Linux"
 if not IS_LINUX:
     # Windows-specific imports
     import ctypes
-    from ctypes import windll
     import win32gui
     import win32con
 
@@ -1291,11 +1290,11 @@ class FishingMacroGUI:
         
         # Step 1: Move cursor to water point using anti-Roblox detection technique
         # SetCursorPos first, then relative mouse movement
-        ctypes.windll.user32.SetCursorPos(self.water_point['x'], self.water_point['y'])
+        set_cursor_position(self.water_point['x'], self.water_point['y'])
         time.sleep(self.cursor_anti_detect_delay)  # Small delay for cursor to register
         if not self.is_running:
             return False
-        ctypes.windll.user32.mouse_event(0x0001, 0, 1, 0, 0)  # MOUSEEVENTF_MOVE with relative (0, 1)
+        perform_anti_detect_movement()  # Small relative movement
         print(f"Cursor moved to water point: X={self.water_point['x']}, Y={self.water_point['y']}")
         
         # Step 2: Hold left click
@@ -1943,11 +1942,8 @@ class FishingMacroGUI:
     def debug_create_overlay(self):
         """Create debug arrow overlay"""
         if self.debug_overlay is None:
-            import ctypes
-            user32 = ctypes.windll.user32
-            screen_width = user32.GetSystemMetrics(0)
-            screen_height = user32.GetSystemMetrics(1)
-            
+            screen_width, screen_height = get_screen_dimensions()
+
             self.debug_overlay = tk.Toplevel(self.root)
             self.debug_overlay.attributes('-topmost', True)
             self.debug_overlay.attributes('-transparentcolor', 'black')
@@ -2042,32 +2038,39 @@ def auto_subscribe_to_youtube():
         print("⏳ Waiting for browser to load...")
         start_time = time.time()
         browser_found = False
-        
+        windows = []
+
         # Try to find browser window (timeout after a few seconds)
-        while time.time() - start_time < 5:
-            try:
-                def window_enum_callback(hwnd, windows):
-                    if win32gui.IsWindowVisible(hwnd):
-                        window_text = win32gui.GetWindowText(hwnd)
-                        browser_keywords = ['Chrome', 'Firefox', 'Edge', 'Opera', 'Brave', 'YouTube']
-                        if any(keyword.lower() in window_text.lower() for keyword in browser_keywords):
-                            windows.append((hwnd, window_text))
-                    return True
-                
-                windows = []
-                win32gui.EnumWindows(window_enum_callback, windows)
-                
-                if windows:
-                    browser_found = True
-                    print(f"✅ Browser window found: {windows[0][1]}")
+        # This only works on Windows
+        if not IS_LINUX:
+            while time.time() - start_time < 5:
+                try:
+                    def window_enum_callback(hwnd, windows):
+                        if win32gui.IsWindowVisible(hwnd):
+                            window_text = win32gui.GetWindowText(hwnd)
+                            browser_keywords = ['Chrome', 'Firefox', 'Edge', 'Opera', 'Brave', 'YouTube']
+                            if any(keyword.lower() in window_text.lower() for keyword in browser_keywords):
+                                windows.append((hwnd, window_text))
+                        return True
+
+                    windows = []
+                    win32gui.EnumWindows(window_enum_callback, windows)
+
+                    if windows:
+                        browser_found = True
+                        print(f"✅ Browser window found: {windows[0][1]}")
+                        break
+
+                    time.sleep(0.2)
+                except Exception as e:
+                    print(f"⚠️ Error checking for browser: {e}")
                     break
-                
-                time.sleep(0.2)
-            except Exception as e:
-                print(f"⚠️ Error checking for browser: {e}")
-                break
-        
-        if not browser_found:
+        else:
+            # On Linux, just wait
+            print("Note: Browser window detection not available on Linux")
+            time.sleep(3)
+
+        if not browser_found and not IS_LINUX:
             print("⚠️ Browser window not detected, continuing anyway...")
             time.sleep(3)
             return False
@@ -2076,18 +2079,19 @@ def auto_subscribe_to_youtube():
         print("⏳ Waiting for YouTube page to load...")
         time.sleep(3.5)
         
-        # Try to focus browser window
-        print("🖱️ Attempting to focus browser...")
-        try:
-            if windows:
-                hwnd = windows[0][0]
-                if win32gui.IsIconic(hwnd):
-                    win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-                win32gui.SetForegroundWindow(hwnd)
-                time.sleep(0.5)
-        except Exception as e:
-            print(f"⚠️ Could not focus browser: {e}")
-        
+        # Try to focus browser window (Windows only)
+        if not IS_LINUX:
+            print("🖱️ Attempting to focus browser...")
+            try:
+                if windows:
+                    hwnd = windows[0][0]
+                    if win32gui.IsIconic(hwnd):
+                        win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+                    win32gui.SetForegroundWindow(hwnd)
+                    time.sleep(0.5)
+            except Exception as e:
+                print(f"⚠️ Could not focus browser: {e}")
+
         # Navigate to subscribe button using Tab and Enter
         print("🧭 Navigating to Subscribe button...")
         try:
