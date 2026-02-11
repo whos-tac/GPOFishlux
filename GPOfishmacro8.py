@@ -518,8 +518,39 @@ class FishingMacroGUI:
         general_tab = ttk.Frame(notebook)
         notebook.add(general_tab, text="General")
         
-        # Hotkeys section (compact)
-        hotkeys_frame = ttk.LabelFrame(general_tab, text="Hotkeys", padding=10)
+        # Control Buttons section
+        buttons_frame = ttk.LabelFrame(general_tab, text="Controls", padding=10)
+        buttons_frame.pack(fill="x", padx=5, pady=5)
+
+        # Create a grid for buttons
+        button_grid = ttk.Frame(buttons_frame)
+        button_grid.pack(fill="x", padx=5, pady=5)
+
+        # Start/Stop button
+        self.start_stop_button = ttk.Button(button_grid, text="▶ Start Macro",
+                                            command=self.toggle_macro,
+                                            width=20)
+        self.start_stop_button.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+
+        # Change Area button
+        change_area_button = ttk.Button(button_grid, text="🔲 Change Area Layout",
+                                       command=self.change_area,
+                                       width=20)
+        change_area_button.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+
+        # Exit button
+        exit_button = ttk.Button(button_grid, text="✖ Exit",
+                                command=self.force_exit,
+                                width=20)
+        exit_button.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
+
+        # Configure grid weights for equal sizing
+        button_grid.columnconfigure(0, weight=1)
+        button_grid.columnconfigure(1, weight=1)
+        button_grid.columnconfigure(2, weight=1)
+
+        # Hotkeys section (compact) - for reference/rebinding
+        hotkeys_frame = ttk.LabelFrame(general_tab, text="Hotkeys (Optional - if working)", padding=10)
         hotkeys_frame.pack(fill="x", padx=5, pady=5)
         
         self.hotkey_displays = {}
@@ -1019,6 +1050,7 @@ class FishingMacroGUI:
         
         if self.is_running:
             self.status_label.config(text="Status: Running", foreground="green")
+            self.start_stop_button.config(text="⏸ Stop Macro")
             # Show outline of mss area
             self.show_outline_overlay()
             # Minimize GUI to background
@@ -1032,6 +1064,7 @@ class FishingMacroGUI:
                 self.main_loop_thread.start()
         else:
             self.status_label.config(text="Status: Stopped", foreground="red")
+            self.start_stop_button.config(text="▶ Start Macro")
             # Hide outline overlay
             self.hide_outline_overlay()
             # Restore GUI window
